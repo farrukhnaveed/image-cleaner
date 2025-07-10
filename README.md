@@ -23,7 +23,7 @@ image-cleaner/
 ├── kafka-image-cleaner.js     # Main consumer script
 ├── kafka-producer.js          # (Optional) Test producer script
 ├── Dockerfile                 # Docker setup
-├── docker-compose.yml         # Multi-service environment (Kafka, Zookeeper, app)
+├── docker-compose.yml         # Service environment (app)
 ├── package.json               # Dependencies
 ├── logs/
 │   └── activity.log           # Runtime logs
@@ -66,7 +66,7 @@ You can either:
 docker-compose up --build
 ```
 
-- Starts Zookeeper, Kafka, and the image-cleaner consumer
+- Starts the image-cleaner consumer
 
 ---
 
