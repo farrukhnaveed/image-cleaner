@@ -1,0 +1,19 @@
+{
+  "name": "image-cleaner",
+  "version": "1.0.0",
+  "main": "kafka-image-cleaner.js",
+  "scripts": {
+    "start": "node kafka-image-cleaner.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "aws-sdk": "^2.1692.0",
+    "dotenv": "^17.2.0",
+    "kafkajs": "^2.2.4",
+    "winston": "^3.17.0"
+  }
+}
