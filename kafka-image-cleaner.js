@@ -109,14 +109,38 @@ async function processMessage(message) {
 }
 
 function parseS3Uri(uri) {
-  // Expects format: s3://bucket-name/path/to/folder
-  const match = uri.match(/^s3:\/\/([^/]+)\/(.+)$/);
-  if (!match) throw new Error('Invalid S3 URI');
-  return {
-    bucket: match[1],
-    keyPrefix: match[2],
-  };
+  let match;
+
+  // s3://bucket/key
+  match = uri.match(/^s3:\/\/([^/]+)\/(.+)$/);
+  if (match) {
+    return {
+      bucket: match[1],
+      keyPrefix: match[2],
+    };
+  }
+
+  // https://bucket.s3.amazonaws.com/key
+  match = uri.match(/^https?:\/\/([^.]+)\.s3\.amazonaws\.com\/(.+)$/);
+  if (match) {
+    return {
+      bucket: match[1],
+      keyPrefix: match[2],
+    };
+  }
+
+  // https://s3.amazonaws.com/bucket/key
+  match = uri.match(/^https?:\/\/s3\.amazonaws\.com\/([^/]+)\/(.+)$/);
+  if (match) {
+    return {
+      bucket: match[1],
+      keyPrefix: match[2],
+    };
+  }
+
+  throw new Error(`Invalid S3 URI or S3 URL: ${uri}`);
 }
+
 
 async function start() {
   await consumer.connect();
