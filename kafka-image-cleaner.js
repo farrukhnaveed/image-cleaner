@@ -74,7 +74,7 @@ async function processMessage(message) {
     return;
   }
 
-  const { image_uri, type, frames } = payload;
+  const { image_uri, type, frames, dl_link } = payload;
   if (!image_uri || !type) {
     logger.error('Missing required keys in message:', payload);
     return;
@@ -95,6 +95,16 @@ async function processMessage(message) {
     }
   } else {
     logger.error('Unknown type:', type);
+  }
+
+  // If dl_link is present and not null, delete the object in that link
+  if (dl_link) {
+    try {
+      const { bucket: dlBucket, keyPrefix: dlKey } = parseS3Uri(dl_link);
+      await deleteFromS3(dlBucket, dlKey);
+    } catch (err) {
+      logger.error(`Failed to process dl_link: ${err.message}`);
+    }
   }
 }
 
