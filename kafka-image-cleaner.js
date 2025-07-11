@@ -82,26 +82,30 @@ async function processMessage(message) {
 
   const { bucket, keyPrefix } = parseS3Uri(image_uri);
 
-  if (type === 'static') {
-    await deleteFromS3(bucket, keyPrefix);
-  } else if (type === '360') {
-    let count = parseInt(frames);
-    count = isNaN(count) ? 0 : count === 0 ? 1 : count; // Ensure at least one frame
-    for (let i = 0; i < count; i++) {
-      let key = path.posix.join(keyPrefix, `${i}.jpg`);
-      await deleteFromS3(bucket, key);
-      key = path.posix.join(keyPrefix, `${i}.webp`);
-      await deleteFromS3(bucket, key);
+  if (bucket && keyPrefix) {
+    if (type === 'static') {
+      await deleteFromS3(bucket, keyPrefix);
+    } else if (type === '360') {
+      let count = parseInt(frames);
+      count = isNaN(count) ? 0 : count === 0 ? 1 : count; // Ensure at least one frame
+      for (let i = 0; i < count; i++) {
+        let key = path.posix.join(keyPrefix, `${i}.jpg`);
+        await deleteFromS3(bucket, key);
+        key = path.posix.join(keyPrefix, `${i}.webp`);
+        await deleteFromS3(bucket, key);
+      }
+    } else {
+      logger.error('Unknown type:', type);
     }
-  } else {
-    logger.error('Unknown type:', type);
   }
 
   // If dl_link is present and not null, delete the object in that link
   if (dl_link) {
     try {
       const { bucket: dlBucket, keyPrefix: dlKey } = parseS3Uri(dl_link);
-      await deleteFromS3(dlBucket, dlKey);
+      if (dlBucket && dlKey) {
+        await deleteFromS3(dlBucket, dlKey);
+      }
     } catch (err) {
       logger.error(`Failed to process dl_link: ${err.message}`);
     }
@@ -138,7 +142,11 @@ function parseS3Uri(uri) {
     };
   }
 
-  throw new Error(`Invalid S3 URI or S3 URL: ${uri}`);
+  logger.error(`Invalid S3 URI: ${uri}`);
+  return {
+    bucket: null,
+    keyPrefix: null,
+  }
 }
 
 
