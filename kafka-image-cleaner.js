@@ -120,7 +120,7 @@ function parseS3Uri(uri) {
 
 async function start() {
   await consumer.connect();
-  await consumer.subscribe({ topic, fromBeginning: false });
+  await consumer.subscribe({ topic, fromBeginning: true });
 
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
